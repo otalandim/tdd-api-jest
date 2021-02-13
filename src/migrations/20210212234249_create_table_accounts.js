@@ -1,8 +1,8 @@
 exports.up = (knex) => {
-  return knex.schema.createTable('accounts', (accounts) => {
-    accounts.increments('id').primary(),
-    accounts.string('name').notNull();
-    accounts.integer('user_id')
+  return knex.schema.createTable('accounts', (t) => {
+    t.increments('id').primary(),
+    t.string('name').notNull();
+    t.integer('userId')
       .references('id')
       .inTable('users')
       .notNull();
