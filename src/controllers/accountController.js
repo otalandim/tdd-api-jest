@@ -2,7 +2,7 @@ module.exports = (app) => {
   const create = (req, res) => {
     app.services.accountService.save(req.body)
       .then((result) => {
-        return res.status(201).json(result[0]);
+        return res.status(201).json(result);
       });
   };
 
@@ -16,5 +16,17 @@ module.exports = (app) => {
       .then((result) => res.status(200).json(result));
   };
 
-  return { create, getAll, get };
+  const update = (req, res) => {
+    app.services.accountService.update(req.params.id, req.body)
+      .then((result) => res.status(200).json(result[0]));
+  };
+
+  const remove = (req, res) => {
+    app.services.accountService.remove(req.params.id)
+      .then(() => res.status(204).send());
+  };
+
+  return {
+    create, getAll, get, update, remove,
+  };
 };
