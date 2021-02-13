@@ -5,38 +5,63 @@ const app = require('../../src/app');
 let user;
 
 beforeAll(async () => {
-  const res = await app.services.userService.save({ name: 'User Account', mail: `${Date.now()}@mail.com`, passwd: '123456' });
-  user = { ...res[0] };
-  console.log(user);
+  const res = await app.services.userService.create({ name: 'bla', mail: `${Date.now()}@mail.com`, passwd: '123456' });
+  user = { ...res };
 });
 
-test.only('deve inserir um conta com sucesso', () => {
+test('deve inserir um conta com sucesso', () => {
   return request(app).post('/accounts')
-    .send({ name: 'Acc #1', user_id: user.id })
+    .send({ name: 'Acc #1', userId: user.id })
     .then((result) => {
-      console.log(result);
+      console.log(result.body);
       expect(result.status).toBe(201);
       expect(result.body.name).toBe('Acc #1');
     });
 });
 
-// test.skip('deve listar todas as contas', () => {
-//  return app.db('accounts')
-//    .insert({ name: 'Acc List', user_id: user.id })
-//    .then(() => request(app).get('/accounts'))
-//    .then((res) => {
-//      expect(res.status).toBe(200);
-//      expect(res.body.length).toBeGreaterThan(0);
-//    });
-// });
-//
-// test.skip('deve retornar uma conta por id', () => {
-//  return app.db('accounts')
-//    .insert({ name: 'Acc By Id', user_id: user.id }, ['id'])
-//    .then((acc) => request(app).get(`/accounts/${acc[0].id}`))
-//    .then((res) => {
-//      expect(res.status).toBe(200);
-//      expect(res.body.name).toBe('Acc By Id');
-//      expect(res.body.user_id).toBe(user.id);
-//    });
-// });
+test('deve listar todas as contas', () => {
+  return app.db('accounts')
+    .insert({ name: 'Conta Lista', userId: user.id })
+    .then(() => request(app).get('/accounts'))
+    .then((res) => {
+      console.log('res.body.length', res.body.length);
+      expect(res.status).toBe(200);
+      expect(res.body.length).toBeGreaterThan(0);
+    });
+});
+
+test('deve retornar uma conta por id', () => {
+  return app.db('accounts')
+    .insert({ name: 'Conta Id', userId: user.id }, ['id'])
+    .then((acc) => request(app).get(`/accounts/${acc[0].id}`))
+    .then((res) => {
+      console.log('res.body.userId', res.body.userId);
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Conta Id');
+      expect(res.body.userId).toBe(user.id);
+    });
+});
+
+test('deve alterar uma conta com sucesso', () => {
+  return app.db('accounts')
+    .insert({ name: 'Conta para Atualizar', userId: user.id }, ['id'])
+    .then((acc) => request(app).put(`/accounts/${acc[0].id}`)
+      .send({ name: 'Conta Atualizada' }))
+    .then((res) => {
+      expect(res.status).toBe(200);
+      expect(res.body.name).toBe('Conta Atualizada');
+    });
+});
+
+test('deve remover uma conta', () => {
+  return app.db('accounts')
+    .insert({ name: 'ContaRemoveById', userId: user.id }, ['id'])
+    .then((acc) => request(app).delete(`/accounts/${acc[0].id}`))
+    .then((res) => {
+      expect(res.status).toBe(204);
+    });
+});
+
+test('não deve inserir uma conta sem nome', () => {
+
+});
