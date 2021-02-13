@@ -5,7 +5,7 @@ const app = require('../../src/app');
 let user;
 
 beforeAll(async () => {
-  const res = await app.services.user.save({ name: 'User Account', mail: `${Date.now()}@mail.com`, passwd: '123456' });
+  const res = await app.services.userService.save({ name: 'User Account', mail: `${Date.now()}@mail.com`, passwd: '123456' });
   user = { ...res[0] };
   console.log(user);
 });
