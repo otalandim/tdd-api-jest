@@ -13,7 +13,6 @@ test('deve inserir um conta com sucesso', () => {
   return request(app).post('/accounts')
     .send({ name: 'Acc #1', userId: user.id })
     .then((result) => {
-      console.log(result.body);
       expect(result.status).toBe(201);
       expect(result.body.name).toBe('Acc #1');
     });
@@ -24,7 +23,6 @@ test('deve listar todas as contas', () => {
     .insert({ name: 'Conta Lista', userId: user.id })
     .then(() => request(app).get('/accounts'))
     .then((res) => {
-      console.log('res.body.length', res.body.length);
       expect(res.status).toBe(200);
       expect(res.body.length).toBeGreaterThan(0);
     });
@@ -35,7 +33,6 @@ test('deve retornar uma conta por id', () => {
     .insert({ name: 'Conta Id', userId: user.id }, ['id'])
     .then((acc) => request(app).get(`/accounts/${acc[0].id}`))
     .then((res) => {
-      console.log('res.body.userId', res.body.userId);
       expect(res.status).toBe(200);
       expect(res.body.name).toBe('Conta Id');
       expect(res.body.userId).toBe(user.id);
